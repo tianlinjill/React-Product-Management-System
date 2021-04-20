@@ -1,8 +1,12 @@
 import React, {Component} from 'react'
 import './login.less'
-import logo from './images/logo.png'
-import { Form, Icon, Input, Button,  } from 'antd';
-// can not code before import
+import logo from '../../assets/images/logo.png'
+import { Form, Icon, Input, Button,message  } from 'antd';
+import { reqLogin } from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
+import { Redirect } from 'react-router-dom';
+
 const Item = Form.Item
 /*
 login component router
@@ -11,9 +15,30 @@ class Login extends Component {
   handleSubmit = (event) => {
       // stop event's default behavior(auto submit)
     event.preventDefault()
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        const { username, password } = values;
+        // request for user login
+        const result = await reqLogin(username, password)
+        // login success!
+        if (result.status === 0) {
+          //login success
+          message.success('Login success! Welcome to Management System!')
+          //
+          const user = result.data;
+         
+          // save the logined user's data to utils files
+          memoryUtils.user = user;// save in memory
+          storageUtils.saveUser(user);// save in local
+
+          //Route to Admin page
+          this.props.history.replace('/')
+        } else {
+          // login failed!
+          message.error(result.msg)
+        }
+      } else {
+        console.log('login Failed!');
       }
     });
       
@@ -36,10 +61,19 @@ class Login extends Component {
   }
 
   render() {
+    // if user logined, redired to admin page
+    const user = memoryUtils.user;
+     
+    if (user && user._id) {
+      return <Redirect to='/'/>
+    }
+
+
+
     const form = this.props.form;
     const { getFieldDecorator } = form;
 
-
+    //user not log in
     return (
       <div className="login">
           <header className="login-header">
