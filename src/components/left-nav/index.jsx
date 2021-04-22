@@ -21,7 +21,7 @@ const { SubMenu } = Menu;
                     )
                 } else {
                     //check if children item was input in url
-                    const cItem = item.children.find(cItem =>  cItem.key === path )
+                    const cItem = item.children.find(cItem => path.indexOf(cItem.key)===0 )
                     if (cItem) {
                         this.openKey = item.key
                     }
