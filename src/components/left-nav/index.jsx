@@ -48,7 +48,10 @@ const { SubMenu } = Menu;
        }
      render() {
         const openKey = this.openKey
-        const path = this.props.location.pathname
+        let path = this.props.location.pathname
+        if(path.indexOf('/product')=== 0) { //make sub route could also be selected by left nav
+             path = '/product'
+         }
         return (
             <div  className="left-nav">
                 <Link to='/' className="left-nav-header">
