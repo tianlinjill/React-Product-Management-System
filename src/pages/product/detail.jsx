@@ -58,17 +58,16 @@ export default class ProductDeatil extends Component {
                         <span className='product-left'>Product Category:</span>
                         <span>
                             {categoryName}
-                            {/* {subCategoryName? <><Icon type='arrow-right' /> {subCategoryName}</> : <>{' '}</>} */}
+                            {/* {subCategoryName? <><Icon type='arrow-right' /> {subCategoryName}</> : <>' '</>} */}
                             {subCategoryName && (
                                 <><Icon type='arrow-right' style={{color:'green', margin:'0 10px '}}/>
                                 {subCategoryName}
                                 </>
                             )}
-                           
                        </span>
                     </Item>
                      <Item className='item'>
-                        <span className='product-left'>商品图片:</span>
+                        <span className='product-left'>Product Photo:</span>
                         <span>
                             {
                                 imgs.map(img => (
@@ -82,12 +81,11 @@ export default class ProductDeatil extends Component {
                         </span>
                     </Item>
                     <Item className='item'>
-                        <span className='product-left'>商品详情:</span>
+                        <span className='product-left'>Product Details:</span>
                         <span dangerouslySetInnerHTML={{__html: detail}}/>
                     </Item>
                 </List>
             </Card>
-
         )
     }
 }
