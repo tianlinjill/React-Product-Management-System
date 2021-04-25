@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Card, Input, Icon, Form, Button, Cascader  } from 'antd'
+import { Card, Input, Icon, Form, Button, Cascader} from 'antd'
 import LinkButton from '../../components/link-button'
-import {reqCategorys} from '../../api/index'
+import { reqCategorys } from '../../api/index'
+import PicturesUpload from './PicturesUpload'
 const Item = Form.Item
 const { TextArea } = Input;
 
@@ -9,7 +10,11 @@ const { TextArea } = Input;
 class PorductAddUpdate extends Component {
      state = {
             options:[] ,
-        };
+    };
+    constructor(props) {
+        super(props);
+        this.pw = React.createRef()
+    }
 
     //validate for price value    
     priceValidator = (rule, value, callback) => {
@@ -33,12 +38,38 @@ class PorductAddUpdate extends Component {
         }
     }
     //init option from categorys's data and update state
-    initOptions = (categorys) => {
+    initOptions = async (categorys) => {
+        //get first category 
        const options= categorys.map(c => ({
             value:c._id,
             label: c.name,
             isLeaf: false,
        }))
+        // 如果是二级分类列表的更新
+        
+        const { isUpdate, product } = this
+        const { pCategoryId } = product
+        //get sub category
+        if (isUpdate && pCategoryId !== '0') {
+            const subCategorys = await this.getCategorys(pCategoryId)
+            // create childOptions Arr according to sub category
+            const childOptions = subCategorys.map(c => ({
+                value:c._id,
+                label: c.name,
+                isLeaf: false,
+            }))
+            console.log(childOptions)
+            console.log(options)
+            // find childOptions belonged father option
+            const targetOption = options.find(option => option.value === pCategoryId)
+            console.log(targetOption)
+            // connect the father option and child option
+            targetOption.children = childOptions
+        }
+       
+        
+        
+        
         this.setState({options})
     }
 
@@ -47,8 +78,10 @@ class PorductAddUpdate extends Component {
     // validate date before submit
         this.props.form.validateFields((err,values) => {
             if (!err) {
-                alert('send ajax')
-                console.log(values)
+                //alert('send ajax')
+               const imgs =  this.pw.current.getImgs()
+                console.log(imgs)
+                 console.log(values)
             }
         })
     }
@@ -76,7 +109,7 @@ class PorductAddUpdate extends Component {
     }
     UNSAFE_componentWillMount() {
         const product = this.props.location.state
-        console.log(product)
+        
 
         this.isUpdate = !!product// true: route from update false: route from add
         this.product = product || {}
@@ -84,6 +117,7 @@ class PorductAddUpdate extends Component {
    
     componentDidMount() {
         this.getCategorys('0')// get first class category
+       
     }
     
     render() {
@@ -160,9 +194,9 @@ class PorductAddUpdate extends Component {
                             
                         </Item>
                         <Item label="Product Photo">
-                            <div></div>
+                             <PicturesUpload ref={this.pw}/>
                         </Item>
-                        <Item label="Product Detail">
+                        <Item label="Product Detail" >
                             <div></div>
                         </Item>
                         <Item label="Submit the request">
