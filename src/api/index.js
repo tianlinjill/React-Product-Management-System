@@ -32,7 +32,15 @@ export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType}) 
 export const reqCategoryId = (categoryId) => ajax(BASE + '/manage/category/info', { categoryId }, 'GET');
 
 // update product's stauts :(delist enroll)
-export const reqUpdateStatus = (productId,status) => ajax(BASE + '/manage/product/updateStatus', {productId,status}, 'POST')
+export const reqUpdateStatus = (productId, status) => ajax(BASE + '/manage/product/updateStatus', { productId, status }, 'POST')
+// add new product
+export const reqAddProduct = (product) => ajax(BASE + '/manage/product/add',  product , 'POST')
+//update product 
+export const reqUpdateProduct = (product) => ajax(BASE + '/manage/product/update',  product , 'POST')
+
 //get Sydney Weather
 export const reqWeather = () => ajax('http://api.openweathermap.org/data/2.5/weather?q=Sydney&appid=8e9dca9c2bf145a564869fdd5c79dccb', 'GET');
+
+// requst for delete img
+export const reqDeleteImg = (name) => ajax(BASE + '/manage/img/delete', { name }, 'POST');
 

@@ -40,7 +40,7 @@ import LinkButton from '../link-button'
                  title = item.title
              } else if (item.children) {
                  //find matched title in all children item
-                 const cItem = item.children.find(cItem => cItem.key === path)
+                 const cItem = item.children.find(cItem => path.indexOf(cItem.key)===0)
                  if (cItem) {
                      // cItem existed means find success
                   title = cItem.title   

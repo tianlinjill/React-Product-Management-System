@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Card, Input, Icon, Form, Button, Cascader} from 'antd'
+import { Card, Input, Icon, Form, Button, Cascader, message} from 'antd'
 import LinkButton from '../../components/link-button'
-import { reqCategorys } from '../../api/index'
+import { reqCategorys,reqAddProduct,reqUpdateProduct } from '../../api/index'
+import RichTextEditor from './RichTextEditor'
 import PicturesUpload from './PicturesUpload'
+
 const Item = Form.Item
 const { TextArea } = Input;
 
@@ -14,6 +16,7 @@ class PorductAddUpdate extends Component {
     constructor(props) {
         super(props);
         this.pw = React.createRef()
+        this.editor = React.createRef()
     }
 
     //validate for price value    
@@ -58,11 +61,12 @@ class PorductAddUpdate extends Component {
                 label: c.name,
                 isLeaf: false,
             }))
-            console.log(childOptions)
-            console.log(options)
+            console.log('options:',options)
+            console.log('childOptions:',childOptions)
+            
             // find childOptions belonged father option
             const targetOption = options.find(option => option.value === pCategoryId)
-            console.log(targetOption)
+            //console.log(targetOption)
             // connect the father option and child option
             targetOption.children = childOptions
         }
@@ -72,16 +76,57 @@ class PorductAddUpdate extends Component {
         
         this.setState({options})
     }
-
     //handle form submit
     submit = () => {
     // validate date before submit
-        this.props.form.validateFields((err,values) => {
+        this.props.form.validateFields (async(err,values) => {
             if (!err) {
-                //alert('send ajax')
-               const imgs =  this.pw.current.getImgs()
-                console.log(imgs)
-                 console.log(values)
+                //1. collect data
+                const imgs = this.pw.current.getImgs()
+                const detail = this.editor.current.getEditor()
+                // ["image-1618820650269.jpg", "image-1618820694393.jpg"]
+                //console.log('imgs', imgs)
+                // html content
+                //console.log('detail', detail) 
+                //{name: "联想ThinkPad 翼4809", desc: "年度重量级新品，X390、T490全新登场 更加轻薄机身设计9", price: 6300, categoryIds: Array(2)[0]：pCategoryId[1]:categoryId}
+                //console.log('values', values)
+                const { name, desc, price, categoryIds } = values
+                let pCategoryId,categoryId
+                if (categoryIds.length === 1) {
+                    // only have one category
+                    pCategoryId = '0'
+                    categoryId = categoryIds[0];
+                } else {
+                    pCategoryId = categoryIds[0];
+                    categoryId = categoryIds[1];
+                }
+                // package product object
+                const product = { categoryId, pCategoryId, name, desc, price, detail, imgs }
+                //send add new product request
+                const result = await reqAddProduct(product)
+                if (!this.isUpdate) {
+                    console.log(this.isUpdate)
+                    if (result.status === 0) {
+                    message.success('Add product successfully!')
+                    this.props.history.goBack()
+                    } else {
+                    message.error('Failed to add product!')
+                    }
+                }else {
+                    product._id = this.product._id
+                    console.log(product)
+                    //send update product request
+                    const result = await reqUpdateProduct(product)
+                    if (result.status === 0) {
+                        message.success('Update product successfully!')
+                        this.props.history.goBack()
+                    } else {
+                        message.error('Failed to update product!')
+                    }
+                }
+                
+                //2 调用接口请求函数去添加和更新
+                //3 根据结果显示数据
             }
         })
     }
@@ -109,12 +154,9 @@ class PorductAddUpdate extends Component {
     }
     UNSAFE_componentWillMount() {
         const product = this.props.location.state
-        
-
         this.isUpdate = !!product// true: route from update false: route from add
         this.product = product || {}
     }
-   
     componentDidMount() {
         this.getCategorys('0')// get first class category
        
@@ -122,7 +164,9 @@ class PorductAddUpdate extends Component {
     
     render() {
         const { product, isUpdate } = this
-        const { categoryId, pCategoryId } = product
+        const { categoryId, pCategoryId, imgs, detail } = product
+        //console.log('product',product)
+        //console.log(product)
         const categorysIds = []
         if (isUpdate) {
             // product belong to first category
@@ -137,7 +181,7 @@ class PorductAddUpdate extends Component {
         const { getFieldDecorator } = this.props.form
         // layout for Form
          const formItemLayout = {
-                labelCol: { span: 8 },
+                labelCol: { span: 2 },
                 wrapperCol: {span: 8 },
                 };
         const title = (
@@ -194,10 +238,14 @@ class PorductAddUpdate extends Component {
                             
                         </Item>
                         <Item label="Product Photo">
-                             <PicturesUpload ref={this.pw}/>
+                            <PicturesUpload ref={this.pw} imgs={imgs}/>
                         </Item>
-                        <Item label="Product Detail" >
-                            <div></div>
+                        <Item label="Product Detail"
+                            
+                             labelCol={{ span: 2 }}
+                            wrapperCol={{span: 20 }}
+                        >
+                            <RichTextEditor ref={this.editor} detail={detail}/>
                         </Item>
                         <Item label="Submit the request">
                             <Button type='primary' onClick={ this.submit}>Submit</Button>
