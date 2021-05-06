@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { Card, Button,Icon,Table, message,Modal } from 'antd';
 import LinkButton from '../../components/link-button'
-import AddFrom from './add-form'
-import UpdateFrom from './update-form'
+import AddForm from './add-form'
+import UpdateForm from './update-form'
 import {reqCategorys,reqUpdateCategory,reqAddCategory} from '../../api'
 
 //products category route
@@ -206,7 +206,7 @@ export default class Category extends Component {
                     onOk={this.addCategory}
                     onCancel={this.handleCancel}
                     >
-                    <AddFrom
+                    <AddForm
                         setForm={(form)=>{this.form = form}}
                         categorys={categorys}
                         parentId={parentId} />
@@ -218,7 +218,7 @@ export default class Category extends Component {
                     onOk={this.updateCategory}
                     onCancel={this.handleCancel}
                     >
-                    <UpdateFrom categoryName={category.name} setForm={(form)=>{this.form = form}}/>
+                    <UpdateForm categoryName={category.name} setForm={(form)=>{this.form = form}}/>
                 </Modal>
       
             </Card>

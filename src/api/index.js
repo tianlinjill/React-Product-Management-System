@@ -36,10 +36,16 @@ export const reqUpdateStatus = (productId, status) => ajax(BASE + '/manage/produ
 // add new product
 export const reqAddProduct = (product) => ajax(BASE + '/manage/product/add',  product , 'POST')
 //update product 
-export const reqUpdateProduct = (product) => ajax(BASE + '/manage/product/update',  product , 'POST')
-
+export const reqUpdateProduct = (product) => ajax(BASE + '/manage/product/update', product, 'POST')
+// get role list
+export const reqRoles = () => ajax(BASE + '/manage/role/list');
+// request add new Role
+export const reqAddRoles = (roleName) => ajax(BASE + '/manage/role/add', { roleName }, 'POST')
+// update Roles
+export const reqUpdateRole = (role) => ajax(BASE + '/manage/role/update', role, 'POST')
 //get Sydney Weather
 export const reqWeather = () => ajax('http://api.openweathermap.org/data/2.5/weather?q=Sydney&appid=8e9dca9c2bf145a564869fdd5c79dccb', 'GET');
+
 
 // requst for delete img
 export const reqDeleteImg = (name) => ajax(BASE + '/manage/img/delete', { name }, 'POST');
