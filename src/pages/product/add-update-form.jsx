@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Card, Input, Icon, Form, Button, Cascader, message} from 'antd'
 import LinkButton from '../../components/link-button'
 import { reqCategorys,reqAddProduct,reqUpdateProduct } from '../../api/index'
@@ -9,7 +9,7 @@ const Item = Form.Item
 const { TextArea } = Input;
 
  
-class PorductAddUpdate extends Component {
+class PorductAddUpdate extends PureComponent {
      state = {
             options:[] ,
     };
@@ -48,7 +48,6 @@ class PorductAddUpdate extends Component {
             label: c.name,
             isLeaf: false,
        }))
-        // 如果是二级分类列表的更新
         
         const { isUpdate, product } = this
         const { pCategoryId } = product
@@ -70,10 +69,6 @@ class PorductAddUpdate extends Component {
             // connect the father option and child option
             targetOption.children = childOptions
         }
-       
-        
-        
-        
         this.setState({options})
     }
     //handle form submit
@@ -124,9 +119,6 @@ class PorductAddUpdate extends Component {
                         message.error('Failed to update product!')
                     }
                 }
-                
-                //2 调用接口请求函数去添加和更新
-                //3 根据结果显示数据
             }
         })
     }

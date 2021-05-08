@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Form, Input, Tree } from 'antd'
 import PropTypes from 'prop-types'
 import menuList from '../../config/menuConfig'
 const Item = Form.Item
 const { TreeNode } = Tree
 
-export default class AuthForm extends Component {
+export default class AuthForm extends PureComponent {
    static propTypes = {
     role: PropTypes.object
   }
@@ -43,6 +43,7 @@ export default class AuthForm extends Component {
         })
     }
     render() {
+        console.log('Authform render()')
         const {role} = this.props
         const {checkedKeys} = this.state
         const formItemLayout = {
