@@ -6,6 +6,7 @@ import AddForm from './AddForm'
 import AuthForm from './AuthForm'
 import { reqAddRoles, reqUpdateRole } from '../../api/index'
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 import {fromateDate} from '../../utils/dateUtils'
 export default class Role extends Component {
     state = {
@@ -89,10 +90,22 @@ export default class Role extends Component {
         // update role
         const result = await reqUpdateRole(role)
         if (result.status === 0) {
-            message.success('Role authorization set successfully!')
-            this.setState({
+           
+            // if update current user's role authorization, init storage , force to log out
+            if (role._id === memoryUtils.user.role_id) {
+                // init storage
+                memoryUtils.user = {}
+                storageUtils.removeUser()
+                // force log out
+                this.props.history.replace('/login')
+                 message.warning('The current user authorization have been modified, please login!')
+            } else {
+                 message.success('Role authorization set successfully!')
+                this.setState({
                 roles:[...this.state.roles]
-            })
+                })
+            }
+            
         }
     }
     UNSAFE_componentWillMount() {
@@ -126,7 +139,14 @@ export default class Role extends Component {
                 <Table
                     bordered
                     rowKey='_id'
-                    rowSelection={{ type: 'radio',selectedRowKeys:[role._id] }}
+                    rowSelection={{
+                        type: 'radio',
+                        selectedRowKeys: [role._id],
+                        onSelect: (role) => {
+                            this.setState({role})
+                        }
+
+                    }}
                     onRow = {this.onRow}
                     pagination={{
                         defaultPageSize: PAGE_SIZE,

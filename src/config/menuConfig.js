@@ -3,6 +3,7 @@ const menuList = [
 title: 'Home', // Menu name
 key: '/home', // Link path
 icon: 'home', // icon
+isPublic: true,
 },
 {
 title: 'Product',

@@ -10,9 +10,6 @@ import ajax from './ajax'
 //   }
 const BASE = ''
 export const reqLogin = (username, password) => ajax(BASE +'/login', { username, password }, 'POST');
-
-//add user
-export const reqAddUser = (user) => ajax(BASE +'/manage/user/add', user, 'POST');
 // get category/children category
 export const reqCategorys = (parentId) => ajax(BASE + '/manage/category/list', { parentId }, 'GET');
 //add category
@@ -43,6 +40,13 @@ export const reqRoles = () => ajax(BASE + '/manage/role/list');
 export const reqAddRoles = (roleName) => ajax(BASE + '/manage/role/add', { roleName }, 'POST')
 // update Roles
 export const reqUpdateRole = (role) => ajax(BASE + '/manage/role/update', role, 'POST')
+// get user list
+export const reqUsers = () => ajax(BASE + '/manage/user/list');
+
+// combine request for add or Update user
+export const reqAddorUpdateUser = (user) => ajax(BASE + '/manage/user/'+(user._id ? 'update' : 'add'), user, 'POST');
+// delete User
+export const reqUserDelete = (userId) => ajax(BASE + '/manage/user/delete',{userId}, 'POST');
 //get Sydney Weather
 export const reqWeather = () => ajax('http://api.openweathermap.org/data/2.5/weather?q=Sydney&appid=8e9dca9c2bf145a564869fdd5c79dccb', 'GET');
 
