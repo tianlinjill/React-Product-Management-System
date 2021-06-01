@@ -1,10 +1,9 @@
 import React, {Component} from 'react'
 import './login.less'
 import logo from '../../assets/images/logo.png'
-import { Form, Icon, Input, Button,message  } from 'antd';
-import { reqLogin } from '../../api'
-import memoryUtils from '../../utils/memoryUtils'
-import storageUtils from '../../utils/storageUtils'
+import { Form, Icon, Input, Button} from 'antd';
+import { connect } from 'react-redux'
+import{login} from '../../redux/actions'
 import { Redirect } from 'react-router-dom';
 
 const Item = Form.Item
@@ -18,25 +17,8 @@ class Login extends Component {
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
         const { username, password } = values;
-        // request for user login
-        const result = await reqLogin(username, password)
-        // login success!
-        if (result.status === 0) {
-          //login success
-          message.success('Login success! Welcome to Management System!')
-          //
-          const user = result.data;
-         
-          // save the logined user's data to utils files
-          memoryUtils.user = user;// save in memory
-          storageUtils.saveUser(user);// save in local
-
-          //Route to Admin page
-          this.props.history.replace('/')
-        } else {
-          // login failed!
-          message.error(result.msg)
-        }
+        // (redux) dispatch async login function
+        this.props.login(username,password)
       } else {
         console.log('login Failed!');
       }
@@ -45,7 +27,7 @@ class Login extends Component {
   }
   //validator for password
   validatorPwd=(rule, value, callback) => {
-    console.log('validatorPwd', rule, value);
+    //console.log('validatorPwd', rule, value);
     if (!value) {
       callback('Password is required!')
     } else if (value.length < 5) {
@@ -62,25 +44,23 @@ class Login extends Component {
 
   render() {
     // if user logined, redired to admin page
-    const user = memoryUtils.user;
-     
+    const user = this.props.user
     if (user && user._id) {
-      return <Redirect to='/'/>
+      return <Redirect to='/home'/>
     }
 
-
-
+   
     const form = this.props.form;
     const { getFieldDecorator } = form;
-
-    //user not log in
+    
     return (
       <div className="login">
           <header className="login-header">
             <img src={logo} alt="logo"/>
             <h1>React Project: Back-end Management System</h1>
           </header>
-          <section className="login-content">
+        <section className="login-content">
+          <div className={user.errorMsg ? 'error-msg show' : 'error-msg'}>{user.errorMsg}</div>
             <h2>User Login</h2>
             {/*login from start*/}
               <Form onSubmit={this.handleSubmit} className="login-form">
@@ -134,7 +114,10 @@ class Login extends Component {
 }
 
 const WrapLogin = Form.create()(Login)
-export default WrapLogin
+export default connect(
+  state => ({user:state.user}),
+  {login}
+)(WrapLogin)
 /**
  * 1. front-end form verification
  *  1.1 verify rules

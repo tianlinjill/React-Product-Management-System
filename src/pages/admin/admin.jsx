@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect,Route, Switch } from 'react-router-dom';
+import {connect} from 'react-redux'
 
-import memoryUtils from '../../utils/memoryUtils'
 import { Layout } from 'antd';
 import LeftNav from '../../components/left-nav/'
 import Header from '../../components/Header'
@@ -17,16 +17,15 @@ const {  Footer, Sider, Content } = Layout;
   /*
   back-end admin component router
    */
-export default class Admin extends Component {
+ class Admin extends Component {
     render() {
-        const user = memoryUtils.user;
+        const user = this.props.user
+        // if localstorage don not save user (user not logined)
         if (!user || !user._id) {
             // user not logined 
             return<Redirect  to='/login'/>
         }
         return (
-            
-               
                 <Layout style={{minHeight:'100%'}}>
                 <Sider >
                     <LeftNav />
@@ -54,4 +53,8 @@ export default class Admin extends Component {
         )
     }
 }
+export default connect(
+    state => ({user: state.user}),
+    {}
+)(Admin)
         

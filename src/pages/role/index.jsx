@@ -5,10 +5,10 @@ import { reqRoles } from '../../api/index'
 import AddForm from './AddForm'
 import AuthForm from './AuthForm'
 import { reqAddRoles, reqUpdateRole } from '../../api/index'
-import memoryUtils from '../../utils/memoryUtils'
-import storageUtils from '../../utils/storageUtils'
+import { connect } from 'react-redux'
+import {logout} from '../../redux/actions'
 import {fromateDate} from '../../utils/dateUtils'
-export default class Role extends Component {
+ class Role extends Component {
     state = {
         roles: [ ],// role list
         role: {}, //selected row's role object
@@ -84,20 +84,15 @@ export default class Role extends Component {
         const role = this.state.role
         const menus = this.auth.current.getMenus()
         role.menus = menus
-        console.log(memoryUtils.user)
-        role.auth_name = memoryUtils.user.username
-        role.auth_time = memoryUtils.user.create_time
+        role.auth_name = this.props.user.username
+        role.auth_time = this.props.user.create_time
         // update role
         const result = await reqUpdateRole(role)
         if (result.status === 0) {
-           
             // if update current user's role authorization, init storage , force to log out
-            if (role._id === memoryUtils.user.role_id) {
-                // init storage
-                memoryUtils.user = {}
-                storageUtils.removeUser()
-                // force log out
-                this.props.history.replace('/login')
+            if (role._id === this.props.user.role_id) {
+                //log out
+                this.props.logout()
                  message.warning('The current user authorization have been modified, please login!')
             } else {
                  message.success('Role authorization set successfully!')
@@ -186,3 +181,7 @@ export default class Role extends Component {
         )
     }
 }
+export default connect(
+    state => ({ user: state.user }),
+    {logout}
+)(Role)
