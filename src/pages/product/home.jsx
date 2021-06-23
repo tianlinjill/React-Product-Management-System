@@ -3,7 +3,7 @@ import { Card, Table, Select, Icon, Button, Input, message } from 'antd'
 import LinkButton from '../../components/link-button'
 import { reqProducts,reqSearchProducts,reqUpdateStatus } from '../../api/index'
 import { PAGE_SIZE } from '../../utils/constains'
-
+import memoryUtils from '../../utils/memoryUtils'
 const Option = Select.Option
 export default class ProductHome extends Component {
 
@@ -63,8 +63,8 @@ export default class ProductHome extends Component {
                      return (
                         
                          <span>
-                             <LinkButton onClick={() => this.props.history.push('/product/addupdate',product) }>Update</LinkButton>
-                             <LinkButton onClick={() => this.props.history.push('/product/detail',{product})}>Details</LinkButton>
+                             <LinkButton onClick={() => this.showUpdate(product) }>Update</LinkButton>
+                             <LinkButton onClick={() => this.showDetail(product)}>Details</LinkButton>
                         </span>
                     )
                 } //
@@ -72,6 +72,18 @@ export default class ProductHome extends Component {
             },
             ];
     }
+    // show product detail component, passing product to detail component
+    showDetail = (product) => {
+        //cache product for detail component
+        memoryUtils.product = product
+        this.props.history.push('/product/detail') 
+    }
+    // show product update component, passing product to update component
+    showUpdate = (product) => {
+        memoryUtils.product = product
+        this.props.history.push('/product/addupdate') 
+    }
+    
     // request for selected page's product data
     getProduct = async (pageNum) => {
         this.pageNum = pageNum
@@ -114,6 +126,8 @@ export default class ProductHome extends Component {
     componentDidMount() {
         this.getProduct(1)
     }
+
+   
 
     render() {
         //get State data

@@ -3,7 +3,8 @@ import { Card, List, Icon } from 'antd'
 import './detail.less'
 import LinkButton from '../../components/link-button'
 import { BASE_IMG_URL } from '../../utils/constains'
-import {reqCategoryId} from '../../api/index'
+import { reqCategoryId } from '../../api/index'
+import memoryUtils from '../../utils/memoryUtils'
 const Item = List.Item
 export default class ProductDeatil extends Component {
     state = {
@@ -11,7 +12,7 @@ export default class ProductDeatil extends Component {
         subCategoryName:'',// sub category name
     }
     async componentDidMount () {
-        const { pCategoryId, categoryId } = this.props.location.state.product
+        const { pCategoryId, categoryId } = memoryUtils.product
         if (pCategoryId === '0') {
             // this product only have one category
             const result = await reqCategoryId(categoryId)
@@ -28,8 +29,12 @@ export default class ProductDeatil extends Component {
             })
         }
     }
+    componentWillUnmount() {
+        // delete product date in cache
+         memoryUtils.product = {}
+    }
     render() {
-        const { name, desc, price, detail, imgs } = this.props.location.state.product
+        const { name, desc, price, detail, imgs } = memoryUtils.product
         const {categoryName, subCategoryName} = this.state
         const title = (
             <span>

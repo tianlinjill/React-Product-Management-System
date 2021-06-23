@@ -4,6 +4,7 @@ import LinkButton from '../../components/link-button'
 import { reqCategorys,reqAddProduct,reqUpdateProduct } from '../../api/index'
 import RichTextEditor from './RichTextEditor'
 import PicturesUpload from './PicturesUpload'
+import memoryUtils from '../../utils/memoryUtils'
 
 const Item = Form.Item
 const { TextArea } = Input;
@@ -145,13 +146,17 @@ class PorductAddUpdate extends PureComponent {
        
     }
     UNSAFE_componentWillMount() {
-        const product = this.props.location.state
-        this.isUpdate = !!product// true: route from update false: route from add
+        const product = memoryUtils.product
+        this.isUpdate = !!product._id// true: route from update false: route from add
         this.product = product || {}
     }
     componentDidMount() {
         this.getCategorys('0')// get first class category
        
+    }
+     componentWillUnmount() {
+        // delete product date in cache
+         memoryUtils.product = {}
     }
     
     render() {
@@ -173,7 +178,7 @@ class PorductAddUpdate extends PureComponent {
         const { getFieldDecorator } = this.props.form
         // layout for Form
          const formItemLayout = {
-                labelCol: { span: 2 },
+                labelCol: { span: 3 },
                 wrapperCol: {span: 8 },
                 };
         const title = (
@@ -234,7 +239,7 @@ class PorductAddUpdate extends PureComponent {
                         </Item>
                         <Item label="Product Detail"
                             
-                             labelCol={{ span: 2 }}
+                             labelCol={{ span: 3 }}
                             wrapperCol={{span: 20 }}
                         >
                             <RichTextEditor ref={this.editor} detail={detail}/>

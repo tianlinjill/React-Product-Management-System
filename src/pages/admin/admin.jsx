@@ -13,6 +13,7 @@ import Role from '../role/'
 import Line from '../charts/line'
 import Bar from '../charts/bar'
 import Pie from '../charts/pie'
+import NotFond from '../notFond/notFond'
 const {  Footer, Sider, Content } = Layout;
   /*
   back-end admin component router
@@ -35,6 +36,7 @@ const {  Footer, Sider, Content } = Layout;
                        
                     <Content style={{margin: 20,backgroundColor: '#fff' }}>
                         <Switch>
+                            <Redirect exact from='/' to='/home'/>
                             <Route path='/home' component={Home} />
                             <Route path='/category' component={Category} />
                             <Route path='/product' component={Product} />
@@ -42,8 +44,9 @@ const {  Footer, Sider, Content } = Layout;
                             <Route path='/user' component={User} />
                             <Route path='/charts/bar' component={Bar} />
                             <Route path='/charts/line' component={Line} />
-                            <Route path='/charts/pie' component={Pie}/>
-                            <Redirect to='/home'/>
+                            <Route path='/charts/pie' component={Pie} />
+                            <Route component={NotFond }/>
+                            
                         </Switch>
                     </Content>
                 <Footer style={{textAlign:'center', color:'#ccc'}}>Designed by Jeffrey Feng</Footer>
